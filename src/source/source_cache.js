@@ -226,7 +226,10 @@ class SourceCache extends Evented {
         this._cache.reset();
 
         for (const i in this._tiles) {
-            if (this._tiles[i].state !== "errored") this._reloadTile(i, 'reloading');
+            if (this._tiles[i].state !== "errored") {
+                // expire vector tiles to force re-request
+                this._reloadTile(i, this._source.type === 'vector' ? 'expired' : 'reloading');
+            }
         }
     }
 
