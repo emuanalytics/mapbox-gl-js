@@ -76,7 +76,7 @@ class SourceCache extends Evented {
             // for sources with mutable data, this event fires when the underlying data
             // to a source is changed. (i.e. GeoJSONSource#setData and ImageSource#serCoordinates)
             if (this._sourceLoaded && !this._paused && e.dataType === "source" && e.sourceDataType === 'content') {
-                this.reload();
+                this.reload(true);
                 if (this.transform) {
                     this.update(this.transform);
                 }
@@ -217,7 +217,7 @@ class SourceCache extends Evented {
             !this._coveredTiles[id] && (symbolLayer || !this._tiles[id].holdingForFade());
     }
 
-    reload() {
+    reload(forceVectorReload = false) {
         if (this._paused) {
             this._shouldReloadOnResume = true;
             return;
@@ -227,8 +227,8 @@ class SourceCache extends Evented {
 
         for (const i in this._tiles) {
             if (this._tiles[i].state !== "errored") {
-                // expire vector tiles to force re-request
-                this._reloadTile(i, this._source.type === 'vector' ? 'expired' : 'reloading');
+                const reloadState = forceVectorReload && this._source.type === 'vector' ? 'expired' : 'reloading';
+                this._reloadTile(i, reloadState);
             }
         }
     }

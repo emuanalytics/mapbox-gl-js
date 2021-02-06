@@ -29681,7 +29681,7 @@ var SourceCache = function (Evented) {
                 this$1._sourceLoaded = true;
             }
             if (this$1._sourceLoaded && !this$1._paused && e.dataType === 'source' && e.sourceDataType === 'content') {
-                this$1.reload();
+                this$1.reload(true);
                 if (this$1.transform) {
                     this$1.update(this$1.transform);
                 }
@@ -29825,7 +29825,9 @@ var SourceCache = function (Evented) {
     SourceCache.prototype._isIdRenderable = function _isIdRenderable(id, symbolLayer) {
         return this._tiles[id] && this._tiles[id].hasData() && !this._coveredTiles[id] && (symbolLayer || !this._tiles[id].holdingForFade());
     };
-    SourceCache.prototype.reload = function reload() {
+    SourceCache.prototype.reload = function reload(forceVectorReload) {
+        if (forceVectorReload === void 0)
+            forceVectorReload = false;
         if (this._paused) {
             this._shouldReloadOnResume = true;
             return;
@@ -29833,7 +29835,8 @@ var SourceCache = function (Evented) {
         this._cache.reset();
         for (var i in this._tiles) {
             if (this._tiles[i].state !== 'errored') {
-                this._reloadTile(i, this._source.type === 'vector' ? 'expired' : 'reloading');
+                var reloadState = forceVectorReload && this._source.type === 'vector' ? 'expired' : 'reloading';
+                this._reloadTile(i, reloadState);
             }
         }
     };
