@@ -30598,7 +30598,7 @@ function diffSources(before, after, commands, sourcesRemoved) {
                             after[sourceId].tiles
                         ]
                     });
-                } else {
+                } else if (after[sourceId].url) {
                     commands.push({
                         command: operations.setVectorSourceUrl,
                         args: [
